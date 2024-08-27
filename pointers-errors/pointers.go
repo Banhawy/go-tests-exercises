@@ -1,16 +1,40 @@
 package pointers
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-type Wallet struct {
-	balance int
+type Bitcoin int
+
+type Stringer interface {
+	String() string
 }
 
-func (w *Wallet) Balance() int {
+type Wallet struct {
+	balance Bitcoin
+}
+
+func (b Bitcoin) String() string {
+	return fmt.Sprintf("%d BTC", b)
+}
+
+func (w *Wallet) Balance() Bitcoin {
 	return w.balance
 }
 
-func (w *Wallet) Deposit(amount int) {
+func (w *Wallet) Deposit(amount Bitcoin) {
 	fmt.Printf("address of balance in Deposit is %p \n", &w.balance)
 	w.balance += amount
+}
+
+var ErrInsufficientFunds = errors.New("cannot withdraw, insufficient funds")
+
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+	if amount > w.balance {
+		return ErrInsufficientFunds
+	}
+
+	w.balance -= amount
+	return nil
 }
