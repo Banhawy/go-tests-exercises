@@ -7,6 +7,30 @@ import (
 	"time"
 )
 
+type SpyCountdownOperations struct {
+	Calls []string
+}
+
+const write = "write"
+const sleep = "sleep"
+
+func (s *SpyCountdownOperations) Sleep() {
+	s.Calls = append(s.Calls, sleep)
+}
+
+func (s *SpyCountdownOperations) Write(p []byte) (n int, err error) {
+	s.Calls = append(s.Calls, write)
+	return
+}
+
+type SpyTime struct {
+	durationSlept time.Duration
+}
+
+func (s *SpyTime) Sleep(duration time.Duration) {
+	s.durationSlept = duration
+}
+
 func TestCountdown(t *testing.T) {
 	t.Run("print 3 to Go!", func(t *testing.T) {
 		buffer := &bytes.Buffer{}
